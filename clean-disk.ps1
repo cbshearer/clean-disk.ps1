@@ -4,6 +4,7 @@ $pctFree      = ($size.SizeRemaining/$size.Size) * 100
 $date         = get-date
 $outfile      = "c:\temp\DiskReport.csv"
 $growthFolder = "c:\temp\XXXXXreportsXXXXX"
+$minimumFree  = "20"
 
 $diskreport = new-object PSCustomobject
 $diskreport | add-member -memberType NoteProperty -name CurrentDate   -value $date
@@ -13,10 +14,10 @@ $diskreport | add-member -memberType NoteProperty -name PercentFree   -value $pc
 
 $diskreport | Export-CSV $outfile -Append -NoTypeInformation
 
-if ($pctFree -le 20) ## if the percentage of disk available is less than or equal to 20%
+if ($pctFree -le $minimumFree) ## if the percentage of disk available is less than or equal to $minimumFree
     {   
         ## display the % free
-        write-host $pctFree
+        Write-Host $pctFree
 
         ## get all of the sample folders
         $sampleFolders = get-childitem $growthFolder | Where-Object {$_.PSIsContainer}
@@ -26,7 +27,7 @@ if ($pctFree -le 20) ## if the percentage of disk available is less than or equa
                     ## if the folder matches the naming format and the folder is over 15 days old, then delete it
                     if (($folder.name -like "*-*-*") -and ($folder.lastwritetime -le $date.adddays(-15))) 
                     {
-                        write-host "Removing:" $folder.name
+                        Write-Host "Removing:" $folder.name
                         remove-item $folder -Force -Recurse -Confirm:$false
 
                         ## add another row to disk report
@@ -45,10 +46,10 @@ if ($pctFree -le 20) ## if the percentage of disk available is less than or equa
                     }
                 }   
             }
-else {write-host -f Green "Disk Free is more than 20%"}
+else {Write-Host -f Green "Disk Free is more than" $minimumFree"%"}
 
 ## display the disk statistics
-    write-host "Disk Size :" ([math]::Round(($size.Size /1GB),2)) "GB"
-    write-host "Disk Free :" ([math]::Round(($size.SizeRemaining /1GB),2)) "GB"
+    Write-Host "Disk Size :" ([math]::Round(($size.Size /1GB),2)) "GB"
+    Write-Host "Disk Free :" ([math]::Round(($size.SizeRemaining /1GB),2)) "GB"
     Write-Host "Disk Free :" ([math]::Round($pctFree,2)) "%"
         
