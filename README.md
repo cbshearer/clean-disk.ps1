@@ -9,16 +9,17 @@ This could be extended to send email or other alerts or to match other patterns.
 ## Use the script
 
 - Set your variables
-  - CSV report destination ($outfile)
-  - Growth folder ($growthFolder)
-  - Minimum disk free percentage ($minimumFree)
+  - CSV report destination ($outfile); default "c:\temp\DiskReport.csv"
+  - Growth folder ($growthFolder); default "c:\temp\Reports"
+  - Minimum disk free percentage ($minimumFree); default 20
+  - Minimum age - number of days of data to keep when clearing out the $growthFolder; default 15
 - Report data to $outfile
   - Date
   - Disk size in bytes
   - Disk free in bytes
   - Percent disk free
 - Find available disk space and size, calculate the % free.
-- If there is less than $minimumFree then evaluate a specifically identified 
+- If there is less than $minimumFree then evaluate a specifically identified $growthFolder
   - Get all of the folders within the $growthFolder
   - Identify those older than 15 days that also match the pattern \*\-\*\-\* (for a date format ex 01-02-2022)
   - Delete the olders and their contents recursively

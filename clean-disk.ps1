@@ -3,8 +3,9 @@ $size         = Get-Volume -DriveLetter c
 $pctFree      = ($size.SizeRemaining/$size.Size) * 100
 $date         = get-date
 $outfile      = "c:\temp\DiskReport.csv"
-$growthFolder = "c:\temp\XXXXXreportsXXXXX"
+$growthFolder = "c:\temp\Reports"
 $minimumFree  = "20"
+$minimumAge   = "15"
 
 $diskreport = new-object PSCustomobject
 $diskreport | add-member -memberType NoteProperty -name CurrentDate   -value $date
@@ -25,7 +26,7 @@ if ($pctFree -le $minimumFree) ## if the percentage of disk available is less th
             foreach ($folder in $samplefolders)
                 {
                     ## if the folder matches the naming format and the folder is over 15 days old, then delete it
-                    if (($folder.name -like "*-*-*") -and ($folder.lastwritetime -le $date.adddays(-15))) 
+                    if (($folder.name -like "*-*-*") -and ($folder.lastwritetime -le $date.adddays(-$minimumAge))) 
                     {
                         Write-Host "Removing:" $folder.name
                         remove-item $folder -Force -Recurse -Confirm:$false
